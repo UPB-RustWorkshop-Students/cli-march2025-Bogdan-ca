@@ -23,7 +23,7 @@ pub struct Tui<B: Backend> {
 impl<B: Backend> Tui<B> {
     /// Constructs a new instance of [`Tui`].
     pub fn new(terminal: Terminal<B>, events: EventsPublisher) -> Self {
-        Self { terminal, events }
+        Self { terminal, events}
     }
 
     /// Initializes the terminal interface.
@@ -49,12 +49,19 @@ impl<B: Backend> Tui<B> {
     /// [`Draw`] the terminal interface by [`rendering`] the widgets.
     ///
     /// Returns Ok() is no errors occured, Err() otherwhise
-    pub fn draw(&mut self, app: &mut App)  -> AppResult<()> {
-        // TODO: draw the interface on the terminal
-
-        // Hint: [`Draw`]: ratatui::Terminal::draw
-        // Hint: [`rendering`]: crate::ui:render
-
+    pub fn draw(&mut self, app: &mut App) -> AppResult<()> {
+        // Set cursor visibility based on input mode
+        if app.input_mode == crate::app::InputMode::Editing {
+            self.terminal.show_cursor()?;
+        } else {
+            self.terminal.hide_cursor()?;
+        }
+        
+        // Draw the interface - remove the generic parameter B
+        self.terminal.draw(|frame| {
+            ui::render(app, frame);  // No generic parameter here!
+        })?;
+        
         Ok(())
     }
 

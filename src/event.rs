@@ -57,6 +57,16 @@ impl EventsPublisher {
                   }
                   Some(Ok(evt)) = crossterm_event => {
                     match evt {
+                      CrosstermEvent::Key(key) => {
+                        _sender.send(Event::Key(key)).unwrap();
+                      }
+                      CrosstermEvent::Mouse(mouse) => {
+                        _sender.send(Event::Mouse(mouse)).unwrap();
+                      }
+                      CrosstermEvent::Resize(width, height) => {
+                        _sender.send(Event::Resize(width, height)).unwrap();
+                      }
+
                       _ => {
                         // TODO: create an arm for each terminal event you are interested into
                         // eq: arrow keys pressed, enter key, scroll...
